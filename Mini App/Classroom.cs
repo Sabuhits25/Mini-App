@@ -10,6 +10,7 @@
         public ClassroomType Type { get; set; }
         public int Limit { get; private set; }
 
+
         public Classroom(string name, ClassroomType type)
         {
             Id = ++_idCounter;

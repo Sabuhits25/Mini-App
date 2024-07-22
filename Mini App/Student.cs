@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class Student
 {
     private static int _idCounter = 0;
+    private string v;
+
     public int Id { get; private set; }
     public string Name { get; set; }
     public string Surname { get; set; }
@@ -15,12 +17,18 @@ public class Student
         Name = name;
         Surname = surname;
     }
+
+    public Student(string v)
+    {
+        this.v = v;
+    }
 }
 
 public class Classroom
 {
     private static int _idCounter = 0;
     private List<Student> students;
+    private string v;
 
     public int Id { get; private set; }
     public string Name { get; set; }
@@ -42,6 +50,11 @@ public class Classroom
         {
             Limit = 15;
         }
+    }
+
+    public Classroom(string v)
+    {
+        this.v = v;
     }
 
     public void AddStudent(Student student)
@@ -75,4 +88,6 @@ public class Classroom
     {
         return students;
     }
+
+   
 }

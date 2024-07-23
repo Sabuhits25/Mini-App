@@ -24,7 +24,7 @@ public class Program
         if(classrooms == null)
             classrooms= new();
 
-        classroomCount = classrooms.Count;
+       
 
         Student student1 = new("Aqil Agayev");
         Student student2 = new("Sebuhi Seferli");

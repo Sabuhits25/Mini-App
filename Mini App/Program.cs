@@ -1,39 +1,27 @@
 ﻿using Mini_App;
 using Newtonsoft.Json;
-using System.Text.Json;
 
 public class Program
 {
     private static string filePath = "database.json";
-    private static Classroom[] classrooms = LoadData();
-    private static int classroomCount = classrooms.Length;
+    private static List<Classroom> classrooms = new();
     private static bool exit;
 
     public static void Main()
     {
-        List<Classroom> classrooms = new();
         Directory.CreateDirectory(@"C:\Users\Zenbook\OneDrive\İş masası");
-        string classroomsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..",  "classrooms.json");
+        string classroomsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "classrooms.json");
         string result;
-        using (StreamReader sr = new StreamReader(classroomsPath)) 
+
+        using (StreamReader sr = new StreamReader(classroomsPath))
         {
             result = sr.ReadToEnd();
         }
 
         classrooms = JsonConvert.DeserializeObject<List<Classroom>>(result);
-        if(classrooms == null)
-            classrooms= new();
+        if (classrooms == null)
+            classrooms = new List<Classroom>();
 
-       
-
-        Student student1 = new("Aqil Agayev");
-        Student student2 = new("Sebuhi Seferli");
-
-        Classroom classRoom = new("PB303",ClassroomType.Backend);
-        classRoom.AddStudent(student1);
-        classRoom.AddStudent(student2);
-
-        bool exit = false;
         while (!exit)
         {
             Console.WriteLine("Menu:");
@@ -66,8 +54,8 @@ public class Program
                         DeleteStudent();
                         break;
                     case "6":
-                        var json = JsonConvert.SerializeObject(student1);
-                        using (StreamWriter sw = new(classroomsPath))
+                        var json = JsonConvert.SerializeObject(classrooms);
+                        using (StreamWriter sw = new StreamWriter(classroomsPath))
                         {
                             sw.WriteLine(json);
                         }
@@ -89,11 +77,6 @@ public class Program
 
     private static void CreateClassroom()
     {
-        if (classroomCount >= classrooms.Length)
-        {
-            Array.Resize(ref classrooms, classroomCount + 1);
-        }
-
         Console.Write("Sinif adi (2 boyuk herf 3 reqem): ");
         var name = Console.ReadLine();
         while (!name.IsValidClassroomName())
@@ -110,10 +93,8 @@ public class Program
             return;
         }
 
-        classrooms[classroomCount++] = new Classroom(name, type);
+        classrooms.Add(new Classroom(name, type));
         Console.WriteLine("Sinif yaradildi.");
-
-
     }
 
     private static void CreateStudent()
@@ -156,16 +137,10 @@ public class Program
     {
         foreach (var classroom in classrooms)
         {
-            if (classroom != null)
+            Console.WriteLine($"Sinif: {classroom.Name}");
+            foreach (var student in classroom.GetStudents())
             {
-                Console.WriteLine($"Sinif: {classroom.Name}");
-                foreach (var student in classroom.GetStudents())
-                {
-                    if (student != null)
-                    {
-                        Console.WriteLine($"Id: {student.Id}, Ad: {student.Name}, Soyad: {student.Surname}");
-                    }
-                }
+                Console.WriteLine($"Id: {student.Id}, Ad: {student.Name}, Soyad: {student.Surname}");
             }
         }
     }
@@ -188,10 +163,7 @@ public class Program
         Console.WriteLine($"Sinif: {classroom.Name}");
         foreach (var student in classroom.GetStudents())
         {
-            if (student != null)
-            {
-                Console.WriteLine($"Id: {student.Id}, Ad: {student.Name}, Soyad: {student.Surname}");
-            }
+            Console.WriteLine($"Id: {student.Id}, Ad: {student.Name}, Soyad: {student.Surname}");
         }
     }
 
@@ -223,35 +195,23 @@ public class Program
 
     private static Classroom FindClassroomById(int id)
     {
-        foreach (var classroom in classrooms)
-        {
-            if (classroom != null && classroom.Id == id)
-            {
-                return classroom;
-            }
-        }
-        return null;
+        return classrooms.FirstOrDefault(classroom => classroom.Id == id);
     }
 
     private static void SaveData()
     {
-        var options = new JsonSerializerOptions
-        {
-            WriteIndented = true
-        };
-
-        var json = JsonConvert.SerializeObject(classrooms);
+        var json = JsonConvert.SerializeObject(classrooms, Formatting.Indented);
         File.WriteAllText(filePath, json);
     }
 
-    private static Classroom[] LoadData()
+    private static List<Classroom> LoadData()
     {
         if (!File.Exists(filePath))
         {
-            return new Classroom[0]; 
+            return new List<Classroom>();
         }
 
         var json = File.ReadAllText(filePath);
-        return JsonConvert.DeserializeObject<Classroom[]>(json) ?? new Classroom[0];
+        return JsonConvert.DeserializeObject<List<Classroom>>(json);
     }
 }

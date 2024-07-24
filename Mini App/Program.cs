@@ -18,8 +18,8 @@ public class Program
             result = sr.ReadToEnd();
         }
 
-        classrooms = JsonConvert.DeserializeObject<List<Classroom>>(result);
-        if (classrooms == null)
+       // classrooms = JsonConvert.DeserializeObject<List<Classroom>>(result);
+        if (classrooms is null)
             classrooms = new List<Classroom>();
 
         while (!exit)
